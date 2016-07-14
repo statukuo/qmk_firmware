@@ -67,21 +67,21 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                                        |      |      |       |      |      |
  *                                 ,------|------|------|       |------+------+------.
  *                                 |      |      |      |       |      |      |      |
- *                                 |      |      |------|       |------|      |      |
+ *                                 |      |LShift|------|       |------|LShift|      |
  *                                 |      |      |      |       |      |      |      |
  *                                 `--------------------'       `--------------------'
  */
 // SYMBOLS
 [SYMB] = KEYMAP(
        // left hand
-       KC_NO,   KC_F1,                KC_F2,    KC_F3,                KC_F4,    KC_F5,    KC_F11,
-       KC_NO,   KC_NO,                KC_NO,    LALT(LCTL(KC_E)),     KC_NO,    KC_NO,    KC_NO,
-       KC_NO,   LALT(LCTL(KC_A)),     KC_NO,    KC_NO,                KC_NO,    KC_NO,
-       KC_NO,   KC_NO,                KC_NO,    KC_NO,                KC_NO,    KC_NO,    KC_NO,
-       KC_NO,   KC_NO,                KC_TRNS,  KC_NO,                KC_NO,
-                                                                        KC_NO,    KC_NO,
-                                                                                  KC_NO,
-                                                              KC_NO,    KC_NO,    KC_NO,
+       KC_NO,   KC_F1,                KC_F2,    KC_F3,                  KC_F4,        KC_F5,    KC_F11,
+       KC_NO,   KC_NO,                KC_NO,    LALT(LCTL(KC_E)),       KC_NO,        KC_NO,    KC_NO,
+       KC_NO,   LALT(LCTL(KC_A)),     KC_NO,    KC_NO,                  KC_NO,        KC_NO,
+       KC_NO,   KC_NO,                KC_NO,    KC_NO,                  KC_NO,        KC_NO,    KC_NO,
+       KC_NO,   KC_NO,                KC_TRNS,  KC_NO,                  KC_NO,
+                                                                        KC_NO,      KC_NO,
+                                                                                    KC_NO,
+                                                              KC_NO,    KC_LSFT,    KC_NO,
        // right hand
        KC_F12,  KC_F6,              KC_F7,                KC_F8,                KC_F9,                KC_F10,   KC_NO,
        KC_NO,   KC_NO,              LALT(LCTL(KC_U)),     LALT(LCTL(KC_I)),     LALT(LCTL(KC_O)),     KC_NO,    KC_NO,
@@ -90,7 +90,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                     KC_NO,                KC_NO,                KC_NO,                KC_NO,    KC_NO,
        KC_NO,   KC_NO,
        KC_NO,
-       KC_NO,   KC_NO,            KC_NO
+       KC_NO,   KC_RSFT,            KC_NO
 ),
 /* Keymap 2: Media and mouse keys
  *
@@ -175,8 +175,12 @@ void matrix_scan_user(void) {
             ergodox_right_led_3_on();
             break;
         default:
-            ergodox_right_led_1_on();
+            // don't do anything
             break;
     }
 
-};
+    // capslock
+    if (host_keyboard_leds() & (3<<USB_LED_CAPS_LOCK)) {
+      ergodox_right_led_1_on();
+    }
+  };
