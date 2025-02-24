@@ -16,6 +16,38 @@ enum custom_keycodes {
   RGB_SLD
 };
 
+enum unicode_names {
+    DEGREE,
+    A,
+    AM,
+    E,
+    EM,
+    I,
+    IM,
+    O,
+    OM,
+    U,
+    UM,
+    N,
+    NM
+};
+
+const uint32_t unicode_map[] PROGMEM = {
+    [DEGREE] = 0x00B0,
+    [A] = 0x00E1,
+    [AM] = 0x00C1,
+    [E] = 0x00E9,
+    [EM] = 0x00C9,
+    [I] = 0x00ED,
+    [IM] = 0x00CD,
+    [O] = 0x00F3,
+    [OM] = 0x00D3,
+    [U] = 0x00FA,
+    [UM] = 0x00DA,
+    [N] = 0x00F1,
+    [NM] = 0x00D1
+};
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /* Keymap 0: Basic layer
  *
@@ -43,7 +75,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_EQL,          KC_1,        KC_2,          KC_3,    KC_4,    KC_5,    KC_ESC,               KC_ESC,       KC_6,    KC_7,    KC_8,    KC_9,              KC_0,           KC_MINS,
   KC_LGUI,         KC_Q,        KC_W,          KC_E,    KC_R,    KC_T,    KC_LBRC,              KC_RBRC,      KC_Y,    KC_U,    KC_I,    KC_O,              KC_P,           KC_RGUI,
   KC_TAB,          KC_A,        KC_S,          KC_D,    KC_F,    KC_G,                                        KC_H,    KC_J,    KC_K,    KC_L,              KC_SCLN,        KC_QUOT,
-  KC_DELT,         KC_Z,        KC_X,          KC_C,    KC_V,    KC_B,    KC_BSLS,              KC_SLSH,      KC_N,    KC_M,    KC_COMM, KC_DOT,            KC_UP,          KC_BSPC,
+  KC_DEL,          KC_Z,        KC_X,          KC_C,    KC_V,    KC_B,    KC_BSLS,              KC_SLSH,      KC_N,    KC_M,    KC_COMM, KC_DOT,            KC_UP,          KC_BSPC,
   KC_LCTL,         KC_LALT,     KC_GRV,        MO(SYMB),KC_LPRN,                                                       KC_RPRN, TG(MDIA),KC_LEFT,           KC_DOWN,        KC_RGHT,
                                                                  KC_INS,  KC_HOME,              KC_PGUP,      KC_PSCR,
                                                                           KC_END,               KC_PGDN,
@@ -73,10 +105,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // SYMBOLS
 [SYMB] = LAYOUT_ergodox_pretty(
   // left hand
-  LALT(LCTL(KC_EQL)), KC_F1,            KC_F2,    KC_F3,            KC_F4,  KC_F5,  KC_F11,          KC_F12,  KC_F6,              KC_F7,                KC_F8,                KC_F9,                KC_F10,   KC_TILD,
-  KC_TRNS,            KC_NO,            KC_NO,    LALT(LCTL(KC_E)), KC_NO,  KC_NO,  KC_NO,           KC_NO,   KC_NO,              LALT(LCTL(KC_U)),     LALT(LCTL(KC_I)),     LALT(LCTL(KC_O)),     KC_NO,    KC_TRNS,
-  KC_TRNS,            LALT(LCTL(KC_A)), KC_NO,    KC_NO,            KC_NO,  KC_NO,                            KC_LEFT,            KC_DOWN,              KC_UP,                KC_RGHT,              KC_NO,    KC_NO,
-  KC_NO,              KC_NO,            KC_NO,    KC_NO,            KC_NO,  KC_NO,  KC_NO,           KC_NO,   LALT(LCTL(KC_N)),   KC_NO,                KC_NO,                KC_NO,                KC_NO,    KC_NO,
+  UM(DEGREE),         KC_F1,            KC_F2,    KC_F3,            KC_F4,  KC_F5,  KC_F11,          KC_F12,  KC_F6,              KC_F7,                KC_F8,                KC_F9,                KC_F10,   KC_TILD,
+  KC_TRNS,            KC_NO,            KC_NO,    UP(E, EM),        KC_NO,  KC_NO,  KC_NO,           KC_NO,   KC_NO,              UP(U, UM),            UP(I, IM),            UP(O, OM),            KC_NO,    KC_TRNS,
+  KC_TRNS,            UP(A, AM),        KC_NO,    KC_NO,            KC_NO,  KC_NO,                            KC_LEFT,            KC_DOWN,              KC_UP,                KC_RGHT,              KC_NO,    KC_NO,
+  KC_NO,              KC_NO,            KC_NO,    KC_NO,            KC_NO,  KC_NO,  KC_NO,           KC_NO,   UP(N, NM),          KC_NO,                KC_NO,                KC_NO,                KC_NO,    KC_NO,
   KC_TRNS,            KC_TRNS,          KC_NO,    KC_TRNS,          KC_NO,                                                        KC_NO,                KC_TRNS,              KC_NO,                KC_NO,    KC_NO,
                                         KC_NO,    KC_NO,                                             KC_NO,   KC_NO,
                                                   KC_NO,                                             KC_NO,
@@ -161,18 +193,19 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         }
 
         // capslock
-    if (host_keyboard_leds() & (1<<USB_LED_CAPS_LOCK)) {
+    #ifdef CAPS_LOCK_STATUS
         ergodox_right_led_1_on();
-    }
+    #endif
 
   return state;
 };
 
-// Runs constantly in the background, in a loop.
-void led_set_user(uint8_t usb_led) {
-    if (usb_led & (1<<USB_LED_CAPS_LOCK)) {
+
+bool led_update_user(led_t led_state) {
+    if (host_keyboard_led_state().caps_lock) {
         ergodox_right_led_1_on();
     } else {
         ergodox_right_led_1_off();
     }
-};
+    return true;
+}

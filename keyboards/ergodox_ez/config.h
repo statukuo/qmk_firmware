@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
+#define UNICODE_TYPE_DELAY 100
+#define UNICODE_SELECTED_MODES UNICODE_MODE_LINUX
 
 /* key matrix size */
 #define MATRIX_ROWS 14
